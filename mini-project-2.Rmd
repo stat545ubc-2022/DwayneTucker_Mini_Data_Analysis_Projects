@@ -193,11 +193,11 @@ cancer_sample2 %>%
 # the order allows Change the order to see the the least frequent groups first
 
 ```
-
 <!----------------------------------------------------------------------------->
 
-<!-------------------------- Start your work below ---------------------------->
 
+
+<!-------------------------- Start your work below ---------------------------->
 **Task Number: 2**
 ```{r}
 cancer_sample2 %>%
@@ -207,7 +207,6 @@ cancer_sample2 %>%
   geom_jitter(aes(colour=area_category)) +
   labs(x="Area categories", y="Mean compactness", title="Relationship between Mean compactness and categories of mean area- factor reverse") +
   facet_grid(diagnosis ~.)
-
 ```
 <!----------------------------------------------------------------------------->
 
@@ -218,11 +217,9 @@ cancer_sample2 %>%
 Pick a research question, and pick a variable of interest (we'll call it "Y") that's relevant to the research question. Indicate these.
 
 <!-------------------------- Start your work below ---------------------------->
-
 **Research Question**: *Do malignant tumours have higher radius_mean than benign tumours?*
 
 **Variable of interest**:**radius_mean**
-
 <!----------------------------------------------------------------------------->
 
 ## 2.1 (5 points)
