@@ -66,7 +66,6 @@ Based on the definition above, can you identify if your data is tidy or untidy? 
 #The dataset looks tidy as each row is an observation
 #represented by ID#, the variables are in column form, and no missing values
 cancer_tibble<- as_tibble(cancer_sample)
-head(cancer_tibble)
 view(cancer_tibble)
 
 #Check for missing values
@@ -115,16 +114,14 @@ Now, you should be more familiar with your data, and also have made progress in 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-*The overaching research question is: Is there a relationship between diagnosis and the other variables?. Choosing to explore the sub-questions stated above facilitates answering the larger questions as they explore the relationship between two variables and tumour diagnosis.* 
+*The overarching goal is to explore the relationship between cancer diagnosis and the other variables in the dataset. Choosing to progress with the two research questions stated above, allows me to begin to explore the larger goal, by investigating the relationship between cancer diagnosis with two variables, radius_mean and radius_worst.* 
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
 
 <!--------------------------- Start your work below --------------------------->
 ```{r}
-# Arrange by diagnosis, Select variables of interest, Mutate to create a  categorical variable
-# from a a continuous variable, Relocate the data to review the cutoffs, Select to drop the
-# unnecessary variables. 
+# Arrange by diagnosis, Select variables of interest, Mutate to create a categorical variable from a continuous variable, Relocate the data to review the cutoffs more efficiently, Select to remove the unnecessary variables. 
 data <- cancer_sample %>% arrange(diagnosis) %>% 
   select(1:6, 8,23, 24) %>%
   mutate(area_category= cut(area_mean, breaks=c(0, 625, 1250, 1875, Inf),
@@ -142,7 +139,7 @@ But first, tasks 1 and 2 below ask you to modify a plot you made in a previous m
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-#Use mutate function to recreate the categories like I did in the previous milestone
+#Use mutate function to recreate the categories like what was done in  milestone 1
 cancer_sample2 <- cancer_sample %>% mutate(area_category= cut(area_mean, breaks=c(0, 625, 1250, 1875, Inf),
                                             labels=c("low", "moderate", "high", "very high")))
 print(cancer_sample2)
@@ -153,7 +150,7 @@ ggplot(cancer_sample2, aes(x=area_category, y=compactness_mean))+
   geom_jitter(aes(colour=area_category)) +
   labs(x="Area categories", y="Mean compactness", title="Relationship between Mean compactness and categories of mean area") 
 
-#Create plot facets 
+#Include facets in previous graph
 ggplot(cancer_sample2, aes(x=area_category, y=compactness_mean))+
   geom_boxplot() +
   geom_jitter(aes(colour=area_category)) +
@@ -182,16 +179,13 @@ Now, choose two of the following tasks.
 <!-------------------------- Start your work below ---------------------------->
 **Task Number: 1**
 ```{r}
+# The original ordering of the factors were fine to begin with, however reversing provides an alternative view that might be preferential if one is more interested in the high extreme groups which would appear first (from left to right)
 cancer_sample2 %>%
   ggplot(aes(x=area_category, y=compactness_mean))+
   geom_boxplot(aes(x = fct_rev(area_category))) +
   geom_jitter(aes(colour=area_category)) +
   labs(x="Area categories", y="Mean compactness", title="Relationship between Mean compactness and categories of mean area- factor reverse") +
   facet_grid(diagnosis ~.)
-
-# The original ordering of the factors were fine to begin with, however reversing
-# the order allows Change the order to see the the least frequent groups first
-
 ```
 <!----------------------------------------------------------------------------->
 
@@ -200,6 +194,7 @@ cancer_sample2 %>%
 <!-------------------------- Start your work below ---------------------------->
 **Task Number: 2**
 ```{r}
+#Collapse the upper categories into one for easier comparison. Categories with extremely low frequency may cause statistical concerns for more complicated analyses
 cancer_sample2 %>%
   mutate(area_category = fct_lump_n (area_category, n = 1)) %>% 
   ggplot(aes(x=area_category, y=compactness_mean)) +
@@ -249,8 +244,9 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-#Print the object with the t-test to view p-value
-print(data_t.test)
+#Print the object with the t-test to view p-value and mean values in each group of cancer diagnosis
+library(broom) #had to run the broom package here. 
+tidy(data_t.test)
 ```
 <!----------------------------------------------------------------------------->
 
@@ -283,8 +279,7 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
-saveRDS(data_t.test, file = here::here("Output", "my_model.rds"))
-
+saveRDS(data_t.test, file = here::here("Output", "my_hypothesis_test.rds"))
 ```
 <!----------------------------------------------------------------------------->
 
