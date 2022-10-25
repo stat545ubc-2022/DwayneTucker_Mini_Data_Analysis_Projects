@@ -235,7 +235,7 @@ Fit a model or run a hypothesis test that provides insight on this variable with
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
 # t-test to compare the mean radius_mean values between malignant and benign groups within the diagnosis variable
-data_test <- t.test(data$radius_mean ~ data$diagnosis, data = data)
+data_t.test <- t.test(data$radius_mean ~ data$diagnosis, data = data)
 ```
 <!----------------------------------------------------------------------------->
 
@@ -250,7 +250,7 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
 #Print the object with the t-test to view p-value
-print(data_test)
+print(data_t.test)
 ```
 <!----------------------------------------------------------------------------->
 
@@ -267,7 +267,11 @@ Take a summary table that you made from Milestone 1 (Task 4.2), and write it as 
 
 <!-------------------------- Start your work below ---------------------------->
 ```{r}
+#Take summary table from milestone and call it summary_tb
+summary_tb <- as_tibble(cancer_sample %>%  group_by(diagnosis) %>% summarise(worst_range= max(radius_worst)- min(radius_worst), worst_mean= mean(radius_worst), worst_median= median(radius_worst), worst_sd=sd(radius_worst))) 
 
+#Create csv file
+write_csv(summary_tb, file = here::here("Output", "summary_tb.csv"))
 ```
 <!----------------------------------------------------------------------------->
 
@@ -278,7 +282,10 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 -   The same robustness and reproducibility criteria as in 3.1 apply here.
 
 <!-------------------------- Start your work below ---------------------------->
+```{r}
+saveRDS(data_t.test, file = here::here("Output", "my_model.rds"))
 
+```
 <!----------------------------------------------------------------------------->
 
 # Tidy Repository
