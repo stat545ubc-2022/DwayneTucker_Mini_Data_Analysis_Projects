@@ -100,27 +100,6 @@ pick 8, and explain whether the data is untidy or tidy.
 #The dataset looks tidy as each row is an observation
 #represented by ID#, the variables are in column form, and no missing values
 cancer_tibble<- as_tibble(cancer_sample)
-head(cancer_tibble)
-```
-
-    ## # A tibble: 6 × 32
-    ##       ID diagn…¹ radiu…² textu…³ perim…⁴ area_…⁵ smoot…⁶ compa…⁷ conca…⁸ conca…⁹
-    ##    <dbl> <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
-    ## 1 8.42e5 M          18.0    10.4   123.    1001   0.118   0.278   0.300   0.147 
-    ## 2 8.43e5 M          20.6    17.8   133.    1326   0.0847  0.0786  0.0869  0.0702
-    ## 3 8.43e7 M          19.7    21.2   130     1203   0.110   0.160   0.197   0.128 
-    ## 4 8.43e7 M          11.4    20.4    77.6    386.  0.142   0.284   0.241   0.105 
-    ## 5 8.44e7 M          20.3    14.3   135.    1297   0.100   0.133   0.198   0.104 
-    ## 6 8.44e5 M          12.4    15.7    82.6    477.  0.128   0.17    0.158   0.0809
-    ## # … with 22 more variables: symmetry_mean <dbl>, fractal_dimension_mean <dbl>,
-    ## #   radius_se <dbl>, texture_se <dbl>, perimeter_se <dbl>, area_se <dbl>,
-    ## #   smoothness_se <dbl>, compactness_se <dbl>, concavity_se <dbl>,
-    ## #   concave_points_se <dbl>, symmetry_se <dbl>, fractal_dimension_se <dbl>,
-    ## #   radius_worst <dbl>, texture_worst <dbl>, perimeter_worst <dbl>,
-    ## #   area_worst <dbl>, smoothness_worst <dbl>, compactness_worst <dbl>,
-    ## #   concavity_worst <dbl>, concave_points_worst <dbl>, symmetry_worst <dbl>, …
-
-``` r
 view(cancer_tibble)
 
 #Check for missing values
@@ -182,11 +161,11 @@ Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
 
-*The overaching research question is: Is there a relationship between
-diagnosis and the other variables?. Choosing to explore the
-sub-questions stated above facilitates answering the larger questions as
-they explore the relationship between two variables and tumour
-diagnosis.*
+*The overarching goal is to explore the relationship between cancer
+diagnosis and the other variables in the dataset. Choosing to progress
+with the two research questions stated above, allows me to begin to
+explore the larger goal, by investigating the relationship between
+cancer diagnosis with two variables, radius_mean and radius_worst.*
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be
@@ -197,9 +176,7 @@ dropping irrelevant columns, etc.).
 <!--------------------------- Start your work below --------------------------->
 
 ``` r
-# Arrange by diagnosis, Select variables of interest, Mutate to create a  categorical variable
-# from a a continuous variable, Relocate the data to review the cutoffs, Select to drop the
-# unnecessary variables. 
+# Arrange by diagnosis, Select variables of interest, Mutate to create a categorical variable from a continuous variable, Relocate the data to review the cutoffs more efficiently, Select to remove the unnecessary variables. 
 data <- cancer_sample %>% arrange(diagnosis) %>% 
   select(1:6, 8,23, 24) %>%
   mutate(area_category= cut(area_mean, breaks=c(0, 625, 1250, 1875, Inf),
@@ -224,7 +201,7 @@ Place the code for your plot below.
 <!-------------------------- Start your work below ---------------------------->
 
 ``` r
-#Use mutate function to recreate the categories like I did in the previous milestone
+#Use mutate function to recreate the categories like what was done in  milestone 1
 cancer_sample2 <- cancer_sample %>% mutate(area_category= cut(area_mean, breaks=c(0, 625, 1250, 1875, Inf),
                                             labels=c("low", "moderate", "high", "very high")))
 print(cancer_sample2)
@@ -262,7 +239,7 @@ ggplot(cancer_sample2, aes(x=area_category, y=compactness_mean))+
 ![](mini-project-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-#Create plot facets 
+#Include facets in previous graph
 ggplot(cancer_sample2, aes(x=area_category, y=compactness_mean))+
   geom_boxplot() +
   geom_jitter(aes(colour=area_category)) +
@@ -317,6 +294,7 @@ Now, choose two of the following tasks.
 **Task Number: 1**
 
 ``` r
+# The original ordering of the factors were fine to begin with, however reversing provides an alternative view that might be preferential if one is more interested in the high extreme groups which would appear first (from left to right)
 cancer_sample2 %>%
   ggplot(aes(x=area_category, y=compactness_mean))+
   geom_boxplot(aes(x = fct_rev(area_category))) +
@@ -326,18 +304,14 @@ cancer_sample2 %>%
 ```
 
 ![](mini-project-2_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-``` r
-# The original ordering of the factors were fine to begin with, however reversing
-# the order allows Change the order to see the the least frequent groups first
-```
-
 <!----------------------------------------------------------------------------->
+
 <!-------------------------- Start your work below ---------------------------->
 
 **Task Number: 2**
 
 ``` r
+#Collapse the upper categories into one for easier comparison. Categories with extremely low frequency may cause statistical concerns for more complicated analyses
 cancer_sample2 %>%
   mutate(area_category = fct_lump_n (area_category, n = 1)) %>% 
   ggplot(aes(x=area_category, y=compactness_mean)) +
@@ -363,7 +337,6 @@ Pick a research question, and pick a variable of interest (we’ll call it
 than benign tumours?*
 
 **Variable of interest**:**radius_mean**
-
 <!----------------------------------------------------------------------------->
 
 ## 2.1 (5 points)
@@ -391,7 +364,7 @@ specifics in STAT 545.
 
 ``` r
 # t-test to compare the mean radius_mean values between malignant and benign groups within the diagnosis variable
-data_test <- t.test(data$radius_mean ~ data$diagnosis, data = data)
+data_t.test <- t.test(data$radius_mean ~ data$diagnosis, data = data)
 ```
 
 <!----------------------------------------------------------------------------->
@@ -413,21 +386,17 @@ Y, or a single value like a regression coefficient or a p-value.
 <!-------------------------- Start your work below ---------------------------->
 
 ``` r
-#Print the object with the t-test to view p-value
-print(data_test)
+#Print the object with the t-test to view p-value and mean values in each group of cancer diagnosis
+library(broom) #had to run the broom package here. 
+tidy(data_t.test)
 ```
 
-    ## 
-    ##  Welch Two Sample t-test
-    ## 
-    ## data:  data$radius_mean by data$diagnosis
-    ## t = -22.209, df = 289.71, p-value < 2.2e-16
-    ## alternative hypothesis: true difference in means between group B and group M is not equal to 0
-    ## 95 percent confidence interval:
-    ##  -5.787448 -4.845165
-    ## sample estimates:
-    ## mean in group B mean in group M 
-    ##        12.14652        17.46283
+    ## # A tibble: 1 × 10
+    ##   estimate estimate1 estimate2 statistic  p.value param…¹ conf.…² conf.…³ method
+    ##      <dbl>     <dbl>     <dbl>     <dbl>    <dbl>   <dbl>   <dbl>   <dbl> <chr> 
+    ## 1    -5.32      12.1      17.5     -22.2 1.68e-64    290.   -5.79   -4.85 Welch…
+    ## # … with 1 more variable: alternative <chr>, and abbreviated variable names
+    ## #   ¹​parameter, ²​conf.low, ³​conf.high
 
 <!----------------------------------------------------------------------------->
 
@@ -451,6 +420,15 @@ function.
     file, and remake it simply by knitting this Rmd file.
 
 <!-------------------------- Start your work below ---------------------------->
+
+``` r
+#Take summary table from milestone and call it summary_tb
+summary_tb <- as_tibble(cancer_sample %>%  group_by(diagnosis) %>% summarise(worst_range= max(radius_worst)- min(radius_worst), worst_mean= mean(radius_worst), worst_median= median(radius_worst), worst_sd=sd(radius_worst))) 
+
+#Create csv file
+write_csv(summary_tb, file = here::here("Output", "summary_tb.csv"))
+```
+
 <!----------------------------------------------------------------------------->
 
 ## 3.2 (5 points)
@@ -463,6 +441,29 @@ Use the functions `saveRDS()` and `readRDS()`.
     here.
 
 <!-------------------------- Start your work below ---------------------------->
+
+``` r
+#Create RDS file of t.test object
+saveRDS(data_t.test, file = here::here("Output", "my_t.test.rds"))
+```
+
+``` r
+#Reload RDS file of t.test object
+readRDS(here::here("Output", "my_t.test.rds"))
+```
+
+    ## 
+    ##  Welch Two Sample t-test
+    ## 
+    ## data:  data$radius_mean by data$diagnosis
+    ## t = -22.209, df = 289.71, p-value < 2.2e-16
+    ## alternative hypothesis: true difference in means between group B and group M is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -5.787448 -4.845165
+    ## sample estimates:
+    ## mean in group B mean in group M 
+    ##        12.14652        17.46283
+
 <!----------------------------------------------------------------------------->
 
 # Tidy Repository
