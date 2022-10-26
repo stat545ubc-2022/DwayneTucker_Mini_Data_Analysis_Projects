@@ -90,12 +90,14 @@ cancer_untidy <- pivot_wider(cancer_sample,
 #View cancer_untidy data
 view(cancer_untidy)
 
-#Re-tidy cancer_tidy by converting to long form and naming it cancer_retidy
+#Re-tidy cancer_tidy by converting to long form and naming it "cancer_retidy"
 cancer_retidy <- cancer_untidy %>% 
   pivot_longer(cols = 31:599,
                names_to = "ID",
                values_to = "diagnosis",
                values_drop_na = TRUE)
+
+#view cancer_retidy data
 view(cancer_retidy)
 ```
 <!----------------------------------------------------------------------------->
@@ -114,7 +116,7 @@ Now, you should be more familiar with your data, and also have made progress in 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-*The overarching goal is to explore the relationship between cancer diagnosis and the other variables in the dataset. Choosing to progress with the two research questions stated above, allows me to begin to explore the larger goal, by investigating the relationship between cancer diagnosis with two variables, radius_mean and radius_worst.* 
+*The overarching goal is to explore the relationship between cancer diagnosis and the other variables in the dataset. Choosing to progress with the two research questions stated above will allow me to begin to explore the larger goal by investigating the relationship between cancer diagnosis with two variables of interest- radius_mean and radius_worst.* 
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
@@ -122,10 +124,12 @@ Now, try to choose a version of your data that you think will be appropriate to 
 <!--------------------------- Start your work below --------------------------->
 ```{r}
 # Arrange by diagnosis, Select variables of interest, Mutate to create a categorical variable from a continuous variable, Relocate the data to review the cutoffs more efficiently, Select to remove the unnecessary variables. 
-data <- cancer_sample %>% arrange(diagnosis) %>% 
+data <- cancer_sample %>% 
+  arrange(diagnosis) %>% 
   select(1:6, 8,23, 24) %>%
   mutate(area_category= cut(area_mean, breaks=c(0, 625, 1250, 1875, Inf),
-                                            labels=c("low", "moderate", "high", "very high"))) %>% relocate(area_category, .before = area_mean) %>%
+                                            labels=c("low", "moderate", "high", "very high"))) %>% 
+  relocate(area_category, .before = area_mean) %>%
   select (2:6, 7:10)
 
 ```                                  
