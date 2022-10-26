@@ -5,7 +5,7 @@ STAT545A 2022 Data Analysis Deliverables
 
 > This folder contains output files from milestone 2
 
-# Files
+# Content
 * summary_tb : csv file of summary object 
 * my_hypothesis_test.rds : output of model object from t_test analysis
 
