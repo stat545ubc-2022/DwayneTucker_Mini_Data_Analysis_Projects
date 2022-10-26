@@ -3,7 +3,7 @@ STAT545A 2022 Data Analysis Deliverables
 
 # Project Information
 
-> This project is to formulate research questions based on partially tidy datasets, and use functions in the dplyr and tidyverse packages to explore the data. The project's data analyses spans two projects. 
+> This project is to formulate research questions based on partially tidy datasets, and use functions in the dplyr and tidyverse packages to explore the data. The project's data analyses spans two projects: Milestone 1 and Milestone 2. 
 
 # Repository Files
 * README : overview of project and repository contents
